@@ -1,6 +1,9 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +33,18 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String correctedPhrase = phrase.replaceAll("[^a-zA-Z]+", " ");
+		String correctedPhrase2 = correctedPhrase.replace("-", " ");
+		String blankString = " ";
+		String correctedPhrase3 = blankString + correctedPhrase2;
+		char [] phraseCharacters = correctedPhrase3.toCharArray(); 
+		String acronym1 = new String();
+		for (int i = 0; i < (correctedPhrase3.length()-1); i++) {
+			if (Character.isWhitespace(phraseCharacters[i])) {
+				acronym1 = acronym1 + String.valueOf(phraseCharacters[i+1]);
+			}
+		}
+		return acronym1.toUpperCase();
 	}
 
 	/**
@@ -84,18 +97,19 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (this.sideOne == this.sideTwo && this.sideTwo == this.sideThree) {
+			return true;} else {return false;}
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (this.sideOne == this.sideTwo || this.sideOne == this.sideThree || this.sideTwo == this.sideThree) {
+			return true;} else {return false;}
+			
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if (this.sideOne != this.sideTwo && this.sideOne != this.sideThree && this.sideTwo != this.sideThree) {
+			return true;} else {return false;}
 		}
 
 	}
@@ -116,9 +130,42 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
-	}
+		String scrabbleWord = string.toUpperCase();
+		char [] scrabbleTiles = scrabbleWord.toCharArray();
+		int points = 0;
+		for (int i=0; i < (string.length()); i++) {
+			switch (scrabbleTiles[i]) {
+			case 'A': case 'E': case 'I': case 'O': case 'U': 
+			case 'L': case 'N': case 'R': case 'S': case 'T':
+				points +=1;
+				break;
+			case 'D': case 'G':
+				points +=2;
+				break;
+			case 'B': case 'C': case 'M': case 'P':
+				points +=3;
+				break;
+			case 'F': case 'H': case 'V': case 'W': case 'Y':
+				points +=4;
+				break;
+			case 'K':
+				points +=5;
+				break;
+			case 'J': case 'X':
+				points += 8;
+				break;
+			case 'Q': case 'Z':
+				points +=10;
+				break;
+			default:
+				points +=0;
+				break;
+				}
+		}
+		return points;
+		}
+	
+
 
 	/**
 	 * 5. Clean up user-entered phone numbers so that they can be sent SMS messages.
@@ -152,9 +199,12 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
-	}
+		String noLetterString = string.replaceAll("[a-zA-z]", "");
+		String noSpaceString = noLetterString.replace(" ", "");
+		String noSpecialString = noSpaceString.replaceAll("[^a-zA-Z0-9]+", "");
+		if (noSpecialString.length() != 10) { throw new IllegalArgumentException();}
+		else { return noSpecialString;}
+		}
 
 	/**
 	 * 6. Given a phrase, count the occurrences of each word in that phrase.
@@ -166,8 +216,18 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		Map<String, Integer> wordMap = new HashMap<String, Integer>(); 
+		String cleanString = string.replaceAll("[^a-zA-z]+", " ");
+		String [] stringPieces= cleanString.split(" ");
+		cleanString += ".";
+		int f = 0;
+		String currentWord = new String();
+		for (int i=0; i < stringPieces.length; i++) {
+			currentWord = stringPieces[i];
+			f = (cleanString.split(currentWord).length)-1;
+			wordMap.put(stringPieces[i], f);
+		}
+		return wordMap;
 	}
 
 	/**
@@ -205,14 +265,22 @@ public class EvaluationService {
 	 * binary search is a dichotomic divide and conquer search algorithm.
 	 * 
 	 */
-	static class BinarySearch<T> {
+	static class BinarySearch<T extends Comparable <T>>{
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
-			// TODO Write an implementation for this method declaration
-			return 0;
-		}
-
+			List<T> list = getSortedList();
+			int middle = (int) Math.floor(list.size()/2);
+			while(t != list.get(middle)) {
+				T test = list.get(middle);
+				if(t.compareTo(test)>0) {
+					middle++;
+				} else if(t.compareTo(test)<0) {
+					middle--;
+				} else { break;}
+				} return middle; }
+			
+		
 		public BinarySearch(List<T> sortedList) {
 			super();
 			this.sortedList = sortedList;
@@ -225,8 +293,9 @@ public class EvaluationService {
 		public void setSortedList(List<T> sortedList) {
 			this.sortedList = sortedList;
 		}
+		}
 
-	}
+	
 
 	/**
 	 * 8. Implement a program that translates from English to Pig Latin.
@@ -246,8 +315,33 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String piglatinPhrase = "";
+		String consanants = new String();
+		String baseWord = new String();
+		
+		String [] allWords = string.split(" ");
+		
+		for (String piggy : allWords) {
+			char [] englishWord = piggy.toCharArray();
+			consanants = "";
+			baseWord = piggy;
+			for (int i = 0; i < englishWord.length; i++) {
+				if (englishWord[i] == 'a' || englishWord[i] == 'e' || englishWord[i] == 'i' || englishWord[i] == 'o' || englishWord[i] == 'u') {
+					break;
+				} else if (englishWord[i] == 'q' && englishWord[i+1] == 'u') {
+					consanants = consanants + englishWord[i] + englishWord[i+1];
+					baseWord = baseWord.substring(2);
+				}
+				else { consanants = consanants + englishWord[i];
+						 baseWord = baseWord.substring(1);
+				} 
+			}
+			piglatinPhrase = piglatinPhrase + " " + baseWord + consanants + "ay";
+		}
+		
+		
+		return piglatinPhrase.trim();
+
 	}
 
 	/**
@@ -266,8 +360,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		String number = "" + input;
+		char [] numberArray = number.toCharArray();
+		int numDigits = numberArray.length;
+		int raisedDigit = 0;
+		for (int i=0; i< numberArray.length; i++) {
+			Integer digit = Integer.parseInt(""+ numberArray[i]);
+			raisedDigit = raisedDigit + (int) Math.pow(digit, numDigits);
+		}
+		boolean isArmstrong = true;
+		if (input != raisedDigit) {
+			isArmstrong = false;
+		}
+		return isArmstrong;
 	}
 
 	/**
@@ -281,8 +386,30 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		List<Long> factors = new ArrayList<Long> ();
+		List<Long> primeFactors = new ArrayList<Long> ();
+		
+		for (Long i= 2L; i<l; i++) {
+			if (l % i == 0) {
+				factors.add(i);
+			} else {break;}
+		}
+		Iterator<Long> it = factors.iterator();
+		
+		while(it.hasNext()) {
+			Long curr = it.next();
+			Long divisor = 2L;
+			boolean isPrime = true;
+			while (divisor < curr) {
+				if (curr % divisor == 0) {
+					isPrime = false;
+				}
+			}
+			if (isPrime == true) {
+				primeFactors.add(curr);
+			}
+		}
+		return primeFactors;
 	}
 
 	/**
@@ -320,7 +447,17 @@ public class EvaluationService {
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
+//			String upKey = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+//			String lowKey = ("abcdefghijklmnopqrstuvwxyz");
+//			char [] message = string.toCharArray();
+//			char product;
+//			for (int i=0; i<string.length(); i++) {
+//				if (lowKey.indexOf(message[i]) > -1) {
+//					product = (char) (message[i] + key);
+//					if (Character.isLetter(product))
+//				}
+//			}
+			
 			return null;
 		}
 
@@ -339,8 +476,25 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int calculateNthPrime(int i) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		int whatPrime = 0;
+		int currNum = 2;
+		if(i < 1) {
+			throw new IllegalArgumentException();
+		}
+		while (i>whatPrime) {
+			boolean isPrime = true;
+			for (int j=2; j < currNum; j++) {
+				if(currNum%j==0) {
+					isPrime=false;
+				}				
+			}
+			if (isPrime) {
+					whatPrime++;
+			}
+			currNum++;
+		}
+		return (currNum-1);
+		
 	}
 
 	/**
